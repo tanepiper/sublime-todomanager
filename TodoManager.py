@@ -11,10 +11,10 @@ __path__ = os.path.dirname(__file__)
 
 TASK_OPTIONS = [
   ['', 'No priority'],
-  ['(A) ', 'Set a task to priority A'],
-  ['(B) ', 'Set a task to priority B'],
-  ['(C) ', 'Set a task to priority C'],
-  ['(D) ', 'Set a task to priority D']
+  ['(A) ', 'Set a todo to priority A'],
+  ['(B) ', 'Set a todo to priority B'],
+  ['(C) ', 'Set a todo to priority C'],
+  ['(D) ', 'Set a todo to priority D']
 ]
 
 # Get the total number of lines in a file, add 1 because it's 0 index
@@ -68,7 +68,7 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
 
   def on_priority(self, priority):
     self.ouput_string += TASK_OPTIONS[priority][0]
-    self.window.show_input_panel("Enter Task", '', self.on_task, None, self.on_cancel)
+    self.window.show_input_panel("Enter Todo", '', self.on_task, None, self.on_cancel)
 
   # Get the user to set the priority first
   def run(self):
@@ -99,7 +99,7 @@ class TodoManagerEdit(sublime_plugin.WindowCommand):
     try:
       lines = open(get_file_name(self), 'r').readlines()
     except IOError:
-      self.window.show_quick_panel(['No tasks for this file'], self.on_cancel)
+      self.window.show_quick_panel(['No todos for this file'], self.on_cancel)
 
     if lines:
       self.window.show_quick_panel(lines, self.on_task_selection)
@@ -122,7 +122,7 @@ class TodoManagerDelete(sublime_plugin.WindowCommand):
     try:
       lines = open(get_file_name(self), 'r').readlines()
     except IOError:
-      self.window.show_quick_panel(['No tasks for this file'], self.on_cancel)
+      self.window.show_quick_panel(['No todos for this file'], self.on_cancel)
 
     if lines:
       self.window.show_quick_panel(lines, self.on_task_selection)
@@ -143,7 +143,7 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     try:
       lines = open(get_file_name(self), 'r').readlines()
     except IOError:
-      self.window.show_quick_panel(['No tasks for this file'], self.on_cancel)
+      self.window.show_quick_panel(['No todos for this file'], self.on_cancel)
 
     if lines:
       active_lines = []
@@ -162,6 +162,6 @@ class TodoManagerList(sublime_plugin.WindowCommand):
       if len(active_lines) > 0:
         self.window.show_quick_panel(active_lines, self.on_task_selection)
       else:
-        self.window.show_quick_panel(['No tasks for this file'], self.on_cancel)
+        self.window.show_quick_panel(['No todos for this file'], self.on_cancel)
     else:
       pass
