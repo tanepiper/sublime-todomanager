@@ -28,11 +28,20 @@ def get_file_name(command):
 
 
 class TodoManagerOpen(sublime_plugin.WindowCommand):
+  """
+  TodoManagerOpen opens the todo.txt file for the current open file
+  """
   def run(self):
+    """
+    Open a new window with the todo file of the current open file
+    """
     self.window.open_file(get_file_name(self))
 
 
 class TodoManagerAdd(sublime_plugin.WindowCommand):
+  """
+  TodoManagerAdd handles the flow of adding a new task to the file
+  """
 
   # The output string that will be saved to the text file
   ouput_string = None
@@ -62,9 +71,14 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
     self.window.show_input_panel("Enter Contexts", '', self.on_contexts, None, self.on_cancel)
 
 
+  def on_line_number(self, line_number):
+    if line_number != '':
+      self.ouput_string += ' ~%s' % line_number
+    self.window.show_input_panel("Enter Projects", '', self.on_projects, None, self.on_cancel)
+
   def on_task(self, task):
     self.ouput_string += task
-    self.window.show_input_panel("Enter Projects", '', self.on_projects, None, self.on_cancel)
+    self.window.show_input_panel("Enter Line Number", '', self.on_line_number, None, self.on_cancel)
 
   def on_priority(self, priority):
     self.ouput_string += TASK_OPTIONS[priority][0]
