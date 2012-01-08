@@ -1,4 +1,4 @@
-import os, sublime, sublime_plugin
+import os, sublime, sublime_plugin, re
 
 TODOMANAGER_HOME_DIR = os.path.expanduser(os.path.join('~', '.todomanager'))
 
@@ -209,19 +209,50 @@ class TodoManagerList(sublime_plugin.WindowCommand):
       # Check for done items
       panel_index = 0
       line_index = 0
+    
       for line in self.lines:
+        projects_string = ''
+
         if show_done == True:
           if line[:1] == '*':  
             self.line_mappings.append([panel_index, line_index])   
-            active_lines.append([str(line_index), line])
+
+            projects_string += str(line_index)
+
+            match_level = re.match(r'\((\w)\)', line, re.I)
+            projects_string += ' %s' % match_level.group() if match_level else 'No priority'
+
+            match_projects = re.compile('(\+\w+)')
+            for match in match_projects.finditer(line):
+              projects_string += ' %s' % match.group()
+
+            match_contexts = re.compile('(\@\w+)')
+            for match in match_contexts.finditer(line):
+              projects_string += ' %s' % match.group()
+
+            active_lines.append([projects_string, line])
             panel_index = panel_index + 1
         else:
           if line[:1] != '*':
-            self.line_mappings.append([panel_index, line_index])  
-            active_lines.append([str(line_index), line])
+            self.line_mappings.append([panel_index, line_index])   
+
+            projects_string += str(line_index)
+
+            match_level = re.match(r'\((\w)\)', line, re.I)
+            projects_string += ' %s' % match_level.group() if match_level else 'No priority'
+
+            match_projects = re.compile('(\+\w+)')
+            for match in match_projects.finditer(line):
+              projects_string += ' %s' % match.group()
+
+            match_contexts = re.compile('(\@\w+)')
+            for match in match_contexts.finditer(line):
+              projects_string += ' %s' % match.group()
+
+            active_lines.append([projects_string, line])
             panel_index = panel_index + 1
         line_index = line_index + 1
-      print self.line_mappings
+
       if len(active_lines) > 0:
         self.window.show_quick_panel(active_lines, self.on_task_selection)
       else:
