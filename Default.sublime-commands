@@ -4,7 +4,7 @@
     "command": "todo_manager_add"
   },
   {
-    "caption": "Todo Manager: Delete by position",
+    "caption": "Todo Manager: Delete",
     "command": "todo_manager_delete"
   },
   {

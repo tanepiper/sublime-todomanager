@@ -75,18 +75,30 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
 
 class TodoManagerDelete(sublime_plugin.WindowCommand):
 
-  def on_done(self, num):
+  def on_cancel(self, task):
+    pass
+
+  def on_task_selection(self, task):
     lines = open(get_file_name(self), 'r').readlines()
-    del lines[int(num) - 1]
+    del lines[int(task)]
     open(get_file_name(self), 'w').writelines(lines)
 
   def run(self):
-    self.window.show_input_panel("Delete Task", '', self.on_done, None, None)
+    lines = None
+    try:
+      lines = open(get_file_name(self), 'r').readlines()
+    except IOError:
+      self.window.show_quick_panel(['No tasks for this file'], self.on_cancel)
+
+    if lines:
+      self.window.show_quick_panel(lines, self.on_task_selection)
+    else:
+      pass
 
 
 class TodoManagerList(sublime_plugin.WindowCommand):
 
-  def on_cancel(self):
+  def on_cancel(self, task):
     pass
 
   # def on_edit(self, task):
@@ -115,21 +127,29 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     # self.window.show_quick_panel(['Done', 'Delete'], self.on_selection)
 
   def run(self, show_done):
-    lines = open(get_file_name(self), 'r').readlines()
-    active_lines = []
-
-    # Check for done items
-    count = 1
-    for line in lines:
-      if show_done == True:
-        if line[:1] == '*':      
-          active_lines.append([str(count), line])
-      else:
-        if line[:1] != '*':
-          active_lines.append([str(count), line])
-      count = count + 1
-
-    if len(active_lines) > 0:
-      self.window.show_quick_panel(active_lines, self.on_task_selection)
-    else:
+    lines = None
+    try:
+      lines = open(get_file_name(self), 'r').readlines()
+    except IOError:
       self.window.show_quick_panel(['No tasks for this file'], self.on_cancel)
+
+    if lines:
+      active_lines = []
+
+      # Check for done items
+      count = 1
+      for line in lines:
+        if show_done == True:
+          if line[:1] == '*':      
+            active_lines.append([str(count), line])
+        else:
+          if line[:1] != '*':
+            active_lines.append([str(count), line])
+        count = count + 1
+
+      if len(active_lines) > 0:
+        self.window.show_quick_panel(active_lines, self.on_task_selection)
+      else:
+        self.window.show_quick_panel(['No tasks for this file'], self.on_cancel)
+    else:
+      pass
