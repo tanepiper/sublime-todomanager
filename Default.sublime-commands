@@ -4,21 +4,25 @@
     "command": "todo_manager_add"
   },
   {
-    "caption": "Todo Manager: Delete (by Task #)",
+    "caption": "Todo Manager: Delete by position",
     "command": "todo_manager_delete"
   },
   {
-    "caption": "Todo Manager: List Active Tasks",
+    "caption": "Todo Manager: List Active",
     "command": "todo_manager_list",
     "args": {
-      "show_done": "false"
+      "show_done": false
     }
   },
   {
-    "caption": "Todo Manager: List Done Tasks",
+    "caption": "Todo Manager: List Done",
     "command": "todo_manager_list",
     "args": {
-      "show_done": "true"
+      "show_done": true
     }
+  },
+  {
+    "caption": "Todo Manager: Open File",
+    "command": "todo_manager_open"
   }
 ]
