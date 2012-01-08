@@ -28,7 +28,6 @@ def get_file_name(command):
 
 
 class TodoManagerOpen(sublime_plugin.WindowCommand):
-
   def run(self):
     self.window.open_file(get_file_name(self))
 
@@ -36,7 +35,7 @@ class TodoManagerOpen(sublime_plugin.WindowCommand):
 class TodoManagerAdd(sublime_plugin.WindowCommand):
 
   # The output string that will be saved to the text file
-  ouput_string = ''
+  ouput_string = None
 
   def on_cancel(self):
     pass
@@ -73,7 +72,39 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
 
   # Get the user to set the priority first
   def run(self):
+    self.ouput_string = ''
     self.window.show_quick_panel(TASK_OPTIONS, self.on_priority)
+
+
+class TodoManagerEdit(sublime_plugin.WindowCommand):
+
+  current_task_position = None
+
+  def on_cancel(self, task):
+    pass
+  
+  def on_task(self, task):
+    lines = open(get_file_name(self), 'r').readlines()
+    lines[self.current_task_position] = '%s' % task
+    open(get_file_name(self), 'w').writelines(lines)
+
+  def on_task_selection(self, task):
+    self.current_task_position = task
+    lines = open(get_file_name(self), 'r').readlines()
+    self.window.show_input_panel("Edit Todo", lines[int(task)], self.on_task, None, self.on_cancel)
+
+  def run(self):
+    self.current_task_position = None
+    lines = None
+    try:
+      lines = open(get_file_name(self), 'r').readlines()
+    except IOError:
+      self.window.show_quick_panel(['No tasks for this file'], self.on_cancel)
+
+    if lines:
+      self.window.show_quick_panel(lines, self.on_task_selection)
+    else:
+      pass
 
 
 class TodoManagerDelete(sublime_plugin.WindowCommand):
@@ -104,30 +135,8 @@ class TodoManagerList(sublime_plugin.WindowCommand):
   def on_cancel(self, task):
     pass
 
-  # def on_edit(self, task):
-  #   lines = open(get_file_name(self), 'r').readlines()
-  #   lines[int(self.current_task_position)] = '%s' % task
-  #   open(get_file_name(self), 'w').writelines(lines)
-
-  # def on_selection(self, option):
-  #   if option == 0:
-  #     lines = open(get_file_name(self), 'r').readlines()
-  #     self.window.show_input_panel("Edit Task", self.active_lines[self.current_task_position], self.on_edit, None, None)
-
-  #   elif option == 1:
-  #     lines = open(get_file_name(self), 'r').readlines()
-  #     lines[int(self.current_task_position)] = '* %s' % lines[int(self.current_task_position)]
-  #     open(get_file_name(self), 'w').writelines(lines)
-
-  #   elif option == 2:
-  #     lines = open(get_file_name(self), 'r').readlines()
-  #     del lines[int(self.current_task_position)]
-  #     open(get_file_name(self), 'w').writelines(lines)
-
   def on_task_selection(self, task):
     pass
-    # self.current_task_position = task
-    # self.window.show_quick_panel(['Done', 'Delete'], self.on_selection)
 
   def run(self, show_done):
     lines = None

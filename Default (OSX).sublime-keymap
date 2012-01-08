@@ -1,5 +1,6 @@
 [
   { "keys": ["super+ctrl+t","super+ctrl+a"], "command": "todo_manager_add" },
+  { "keys": ["super+ctrl+t","super+ctrl+e"], "command": "todo_manager_edit" },
   { "keys": ["super+ctrl+t","super+ctrl+d"], "command": "todo_manager_delete" },
   { "keys": ["super+ctrl+t","super+ctrl+k"], "command": "todo_manager_list", "args": { "show_done": "true" } },
   { "keys": ["super+ctrl+t","super+ctrl+l"], "command": "todo_manager_list", "args": { "show_done": "false" } },

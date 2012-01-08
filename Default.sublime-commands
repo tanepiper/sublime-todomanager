@@ -4,6 +4,10 @@
     "command": "todo_manager_add"
   },
   {
+    "caption": "Todo Manager: Edit",
+    "command": "todo_manager_edit"
+  },
+  {
     "caption": "Todo Manager: Delete",
     "command": "todo_manager_delete"
   },
