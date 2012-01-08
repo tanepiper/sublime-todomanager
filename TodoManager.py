@@ -157,34 +157,71 @@ class TodoManagerDelete(sublime_plugin.WindowCommand):
 
 
 class TodoManagerList(sublime_plugin.WindowCommand):
+  lines = None
+  line_mappings = []
+  task_position = None
 
   def on_cancel(self, task):
     pass
 
-  def on_task_selection(self, task):
-    pass
+  def on_task(self, task):
+    lines = open(get_file_name(self), 'r').readlines()
+    line_position = self.line_mappings[self.task_position][1]
+    lines[line_position] = '%s' % task
+    open(get_file_name(self), 'w').writelines(lines)
+
+  def on_action(self, action):
+    if action == 0:
+      lines = open(get_file_name(self), 'r').readlines()
+      line_position = self.line_mappings[self.task_position][1]
+      line = lines[line_position]
+      if line[:1] == '*':
+        lines[line_position] = '%s' % lines[line_position].replace('* ', '')
+      else:
+        lines[line_position] = '* %s' % lines[line_position]
+
+      open(get_file_name(self), 'w').writelines(lines)
+    if action == 1:
+      lines = open(get_file_name(self), 'r').readlines()
+      line_position = self.line_mappings[self.task_position][1]
+      line = lines[line_position]
+      self.window.show_input_panel("Edit Todo", line, self.on_task, None, self.on_cancel)
+    if action == 2:
+      lines = open(get_file_name(self), 'r').readlines()
+      line_position = self.line_mappings[self.task_position][1]
+      del lines[int(line_position)]
+      open(get_file_name(self), 'w').writelines(lines)
+
+  def on_task_selection(self, task_position):
+    self.task_position = task_position
+    self.window.show_quick_panel(['Mark (Un)Done', 'Edit', 'Delete'], self.on_action)
 
   def run(self, show_done):
-    lines = None
+    self.lines = None
+    self.line_mappings = []
     try:
-      lines = open(get_file_name(self), 'r').readlines()
+      self.lines = open(get_file_name(self), 'r').readlines()
     except IOError:
       self.window.show_quick_panel(['No todos for this file'], self.on_cancel)
 
-    if lines:
+    if self.lines:
       active_lines = []
-
       # Check for done items
-      count = 1
-      for line in lines:
+      panel_index = 0
+      line_index = 0
+      for line in self.lines:
         if show_done == True:
-          if line[:1] == '*':      
-            active_lines.append([str(count), line])
+          if line[:1] == '*':  
+            self.line_mappings.append([panel_index, line_index])   
+            active_lines.append([str(line_index), line])
+            panel_index = panel_index + 1
         else:
           if line[:1] != '*':
-            active_lines.append([str(count), line])
-        count = count + 1
-
+            self.line_mappings.append([panel_index, line_index])  
+            active_lines.append([str(line_index), line])
+            panel_index = panel_index + 1
+        line_index = line_index + 1
+      print self.line_mappings
       if len(active_lines) > 0:
         self.window.show_quick_panel(active_lines, self.on_task_selection)
       else:
