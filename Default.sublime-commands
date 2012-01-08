@@ -1,0 +1,10 @@
+[
+  {
+    "caption": "Todo Manager: Add",
+    "command": "todo_manager_add"
+  },
+  {
+    "caption": "Todo Manager: Delete (by Task #)",
+    "command": "todo_manager_delete"
+  }
+]
