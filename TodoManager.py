@@ -41,15 +41,18 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
   def on_cancel(self):
     pass
 
+  def on_done(self):
+    todo_path_file = open(get_file_name(self), 'a+')
+    todo_path_file.write("%s\n" %  self.ouput_string)
+    todo_path_file.close()
+
   def on_contexts(self, contexts):
     if contexts != '':
       contexts_list = contexts.split(' ')
       for context in contexts_list:
         self.ouput_string += ' @%s' % context
 
-    todo_path_file = open(get_file_name(self), 'a+')
-    todo_path_file.write("%s\n" %  self.ouput_string)
-    todo_path_file.close()
+    self.on_done()
 
   def on_projects(self, projects):
     if projects != '':
