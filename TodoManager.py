@@ -217,7 +217,7 @@ class TodoManagerList(sublime_plugin.WindowCommand):
           if line[:1] == '*':  
             self.line_mappings.append([panel_index, line_index])   
 
-            projects_string += str(line_index)
+            projects_string += 'Task %d' % line_index
 
             match_level = re.match(r'\((\w)\)', line, re.I)
             projects_string += ' %s' % match_level.group() if match_level else 'No priority'
@@ -236,7 +236,7 @@ class TodoManagerList(sublime_plugin.WindowCommand):
           if line[:1] != '*':
             self.line_mappings.append([panel_index, line_index])   
 
-            projects_string += str(line_index)
+            projects_string += 'Task %d' % line_index
 
             match_level = re.match(r'\((\w)\)', line, re.I)
             projects_string += ' %s' % match_level.group() if match_level else 'No priority'
