@@ -1,32 +1,42 @@
 [
   {
-    "caption": "Todo Manager: Add",
-    "command": "todo_manager_add"
+    "caption": "Todo: Add",
+    "command": "todo_manager_add",
+    "args": {
+      "at_line": false
+    }
   },
   {
-    "caption": "Todo Manager: Edit",
+    "caption": "Todo: Add-at-line",
+    "command": "todo_manager_add",
+    "args": {
+      "at_line": true
+    }
+  },
+  {
+    "caption": "Todo: Edit",
     "command": "todo_manager_edit"
   },
   {
-    "caption": "Todo Manager: Delete",
+    "caption": "Todo: Delete",
     "command": "todo_manager_delete"
   },
   {
-    "caption": "Todo Manager: List Active",
+    "caption": "Todo: List Active",
     "command": "todo_manager_list",
     "args": {
       "show_done": false
     }
   },
   {
-    "caption": "Todo Manager: List Done",
+    "caption": "Todo: List Done",
     "command": "todo_manager_list",
     "args": {
       "show_done": true
     }
   },
   {
-    "caption": "Todo Manager: Open File",
+    "caption": "Todo: Open File",
     "command": "todo_manager_open"
   }
 ]

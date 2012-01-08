@@ -46,6 +46,8 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
   # The output string that will be saved to the text file
   ouput_string = None
 
+  at_line = 0
+
   def on_cancel(self):
     pass
 
@@ -53,6 +55,8 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
     todo_path_file = open(get_file_name(self), 'a+')
     todo_path_file.write("%s\n" %  self.ouput_string)
     todo_path_file.close()
+
+    self.window.active_view().set_status('todomanager', 'Todo saved: ' + self.ouput_string)
 
   def on_contexts(self, contexts):
     if contexts != '':
@@ -74,18 +78,26 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
   def on_line_number(self, line_number):
     if line_number != '':
       self.ouput_string += ' ~%s' % line_number
+
     self.window.show_input_panel("Enter Projects", '', self.on_projects, None, self.on_cancel)
 
   def on_task(self, task):
-    self.ouput_string += task
-    self.window.show_input_panel("Enter Line Number", '', self.on_line_number, None, self.on_cancel)
+    if task != '':
+      self.ouput_string += task
+      self.window.show_input_panel("Enter Line Number", str(self.at_line) if self.at_line > 0 else '', self.on_line_number, None, self.on_cancel)
+    else:
+      pass
 
   def on_priority(self, priority):
     self.ouput_string += TASK_OPTIONS[priority][0]
     self.window.show_input_panel("Enter Todo", '', self.on_task, None, self.on_cancel)
 
   # Get the user to set the priority first
-  def run(self):
+  def run(self, at_line):
+    self.at_line = 0
+    line, column = self.window.active_view().rowcol(self.window.active_view().sel()[0].begin())
+    if at_line is True:
+      self.at_line = line
     self.ouput_string = ''
     self.window.show_quick_panel(TASK_OPTIONS, self.on_priority)
 

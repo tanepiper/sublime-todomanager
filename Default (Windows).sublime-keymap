@@ -1,5 +1,6 @@
 [
-  { "keys": ["ctrl+alt+t","ctrl+alt+a"], "command": "todo_manager_add" },
+  { "keys": ["ctrl+alt+t","ctrl+alt+a"], "command": "todo_manager_add", "args": { "at_line": false } },
+  { "keys": ["ctrl+alt+t","ctrl+alt+s"], "command": "todo_manager_add", "args": { "at_line": true } },
   { "keys": ["ctrl+alt+t","ctrl+alt+e"], "command": "todo_manager_edit" },
   { "keys": ["ctrl+alt+t","ctrl+alt+d"], "command": "todo_manager_delete" },
   { "keys": ["ctrl+alt+t","ctrl+alt+k"], "command": "todo_manager_list", "args": { "show_done": "true" } },
