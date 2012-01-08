@@ -21,16 +21,17 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
     todo_path_file.close()
 
   def on_priority(self, priority):
+    priority_string = ''
     if int(priority) == 1:
-      priority_string = '%s' % ('A')
+      priority_string = '%s ' % ('(A)')
     elif int(priority) == 2:
-      priority_string = '%s' % ('B')
-    self.window.show_input_panel("Enter Task", '(%s) ' % (priority_string), self.on_done, None, None)
+      priority_string = '%s ' % ('(B)')
+    self.window.show_input_panel("Enter Task", '%s' % (priority_string), self.on_done, None, None)
   def run(self):
     self.window.show_quick_panel([
       ['None', 'No priority'],
       ['A', 'Set a task to priority A'],
-      ['B', 'Set a task to priorityB']
+      ['B', 'Set a task to priority B']
     ], self.on_priority)
     #self.window.show_input_panel("Set Priority (Enter letter A/B/C/D", '', self.on_priority, None, None)
 
