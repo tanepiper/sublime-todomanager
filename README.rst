@@ -2,18 +2,35 @@
 Sublime Text 2 Todo Manager
 ================
 
-A very simple todo manager for Sublime Text 2.
+https://github.com/tanepiper/sublime-todomanager
 
-The format is _[[Todo.txt compatible|https://github.com/ginatrapani/todo.txt-cli/wiki/The-Todo.txt-Format]].
+My new plugin for Sublime Text 2. It's a simple Todo manager that is on a per-file basis.
 
-A todo list can be created for any open file, stored as <pre>todo-<filename>.txt</pre> in your $HOME/.todomanager folder
+Release:1.0.5
 
-Commands are available via the command palete, or following key combinations:
+Commands available through the command palate are:
 
-<pre>
-  Ctrl + Alt + T, Ctrl + Alt + T - Todo Manager: Add
-  Ctrl + Alt + T, Ctrl + Alt + L - Todo Manager: List Active
-  Ctrl + Alt + T, Ctrl + Alt + K - Todo Manager: List Done
-  Ctrl + Alt + T, Ctrl + Alt + D - Todo Manager: Delete by position
-  Ctrl + Alt + T, Ctrl + Alt + O - Todo Manager: Open File
-</pre>
+Todo Manager: Add + Add at Line
+Todo Manager: Edit
+Todo Manager: Delete
+Todo Manager: List Active
+Todo Manager: List Done
+Todo Manager: Open file
+
+All have keybindings for Windows, Mac and Linux (untested).
+
+When you now go into a list item, you can mark it done or undone, can simply edit it or delete it.  Add at line will automatically set the line number (but you can edit it in the steps).
+
+When adding a new task you will first be presented with a list of priority settings, you can hit Esc if you don't want one, or select none - but I give a sensible list of A-D here.  Next you enter the text of the todo item, next the line mapping.  Line mapping is not in the todo.txt format but is stored with a ~ character and I hope to add support for this in the future.
+
+Adding projects and contexts allows you to tag items with a project (+) prefix or context (@) prefix - just enter them space separated, you don't need to add the + or @ these will be automatically added.  Marked items are marked with a * at the beginning.  The plugin uses the autosearch facility of the query panel to allow you to filter content. I'll be looking to add date support at a later date as well.
+
+Editing, currently you will be presented with just the whole text string of the todo to edit - and delete is pretty self explanatory.
+
+The plugin creates a .todomanager folder in your home directory to keep them self contained, in the name format 'todo-<filename>.txt' base on the current active file - this means you have a todo per file.  There is plans to add search over todo files as well.
+
+There is global functions to support editing and deleting, this will list all tasks in the file regardless of if they are done or not.
+
+Is available via the package manager (not active yet though, you can just get it from github)
+
+Comments and suggestions welcome
