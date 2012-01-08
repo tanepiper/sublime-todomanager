@@ -6,5 +6,9 @@
   {
     "caption": "Todo Manager: Delete (by Task #)",
     "command": "todo_manager_delete"
+  },
+  {
+    "caption": "Todo Manager: List",
+    "command": "todo_manager_list"
   }
 ]

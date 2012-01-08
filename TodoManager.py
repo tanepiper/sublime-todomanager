@@ -32,7 +32,6 @@ class TodoManagerDelete(sublime_plugin.WindowCommand):
 
     view = self.window.active_view()
     path = view.file_name().split(os.path.sep)
-
     todo_filename = 'todo-' + path[len(path) - 1] + '.txt'
 
     lines = open(todo_filename, 'r').readlines()
@@ -41,3 +40,18 @@ class TodoManagerDelete(sublime_plugin.WindowCommand):
 
   def run(self):
     self.window.show_input_panel("Delete Task", '', self.on_done, None, None)
+
+
+class TodoManagerList(sublime_plugin.WindowCommand):
+
+  def on_done(self, option):
+    pass
+
+  def run(self):
+    view = self.window.active_view()
+    path = view.file_name().split(os.path.sep)
+    todo_filename = 'todo-' + path[len(path) - 1] + '.txt'
+
+    lines = open(todo_filename, 'r').readlines()
+
+    self.window.show_quick_panel(lines, self.on_done)
