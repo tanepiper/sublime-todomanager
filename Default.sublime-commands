@@ -8,7 +8,17 @@
     "command": "todo_manager_delete"
   },
   {
-    "caption": "Todo Manager: List",
-    "command": "todo_manager_list"
+    "caption": "Todo Manager: List Active Tasks",
+    "command": "todo_manager_list",
+    "args": {
+      "show_done": "false"
+    }
+  },
+  {
+    "caption": "Todo Manager: List Done Tasks",
+    "command": "todo_manager_list",
+    "args": {
+      "show_done": "true"
+    }
   }
 ]

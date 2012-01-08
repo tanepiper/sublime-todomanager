@@ -1,0 +1,3 @@
+[
+  { "keys": ["ctrl+alt+t","ctrl+alt+a"], "command": "todo_manager_add" }
+]

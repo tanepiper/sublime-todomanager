@@ -1,3 +1,4 @@
 (A) Order list by priority
-(A) Add ability to edit tasks
+* (A) Add ability to edit tasks
 (A) Enable and disable tasks
+(A) Add support for contexts and projects
