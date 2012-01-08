@@ -1,1 +1,3 @@
 (A) Order list by priority
+(A) Add ability to edit tasks
+(A) Enable and disable tasks
