@@ -165,32 +165,28 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     pass
 
   def on_task(self, task):
-    lines = open(get_file_name(self), 'r').readlines()
     line_position = self.line_mappings[self.task_position][1]
-    lines[line_position] = '%s' % task
-    open(get_file_name(self), 'w').writelines(lines)
+    self.lines[line_position] = '%s' % task
+    open(get_file_name(self), 'w').writelines(self.lines)
 
   def on_action(self, action):
     if action == 0:
-      lines = open(get_file_name(self), 'r').readlines()
       line_position = self.line_mappings[self.task_position][1]
-      line = lines[line_position]
+      line = self.lines[line_position]
       if line[:1] == '*':
-        lines[line_position] = '%s' % lines[line_position].replace('* ', '')
+        self.lines[line_position] = '%s' % self.lines[line_position].replace('* ', '')
       else:
-        lines[line_position] = '* %s' % lines[line_position]
+        self.lines[line_position] = '* %s' % self.lines[line_position]
 
-      open(get_file_name(self), 'w').writelines(lines)
+      open(get_file_name(self), 'w').writelines(self.lines)
     if action == 1:
-      lines = open(get_file_name(self), 'r').readlines()
       line_position = self.line_mappings[self.task_position][1]
-      line = lines[line_position]
+      line = self.lines[line_position]
       self.window.show_input_panel("Edit Todo", line, self.on_task, None, self.on_cancel)
     if action == 2:
-      lines = open(get_file_name(self), 'r').readlines()
       line_position = self.line_mappings[self.task_position][1]
-      del lines[int(line_position)]
-      open(get_file_name(self), 'w').writelines(lines)
+      del self.lines[int(line_position)]
+      open(get_file_name(self), 'w').writelines(self.lines)
 
   def on_task_selection(self, task_position):
     self.task_position = task_position
