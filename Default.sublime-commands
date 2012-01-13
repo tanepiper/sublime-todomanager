@@ -22,17 +22,24 @@
     "command": "todo_manager_delete"
   },
   {
+    "caption": "Todo: List All",
+    "command": "todo_manager_list",
+    "args": {
+      "show_state": 1
+    }
+  },
+  {
     "caption": "Todo: List Active",
     "command": "todo_manager_list",
     "args": {
-      "show_done": false
+      "show_state": 2
     }
   },
   {
     "caption": "Todo: List Done",
     "command": "todo_manager_list",
     "args": {
-      "show_done": true
+      "show_state": 3
     }
   },
   {
