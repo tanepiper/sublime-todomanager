@@ -255,17 +255,18 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     panel_index = 0
     # Keep a note of the line index
     line_index = 0
-
+    text = ''
     # Loop over the line
     for line in self.lines:
       todo_header_string = ''
-
       if show_done == True:
+        text = 'done'
         if line[:1] == '*':
           self.line_mappings.append([panel_index, line_index])
           active_lines.append([create_header_line(line, line_index), line])
           panel_index = panel_index + 1
       else:
+        text = 'active'
         if line[:1] != '*':
           self.line_mappings.append([panel_index, line_index])
           active_lines.append([create_header_line(line, line_index), line])
@@ -275,4 +276,4 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     if len(active_lines) > 0:
       self.window.show_quick_panel(active_lines, self.on_task_selection)
     else:
-      pass
+      sublime.error_message('There are no %s todos for %s' % ( text, get_file_name(self) ) )
