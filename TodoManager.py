@@ -2,13 +2,7 @@ import os, sublime, sublime_plugin, re
 
 DEFAULT_TODO_PATH = os.path.expanduser(os.path.join('~', '.todomanager'))
 
-SHOW_STATE_ALL = 1
-SHOW_STATE_ACTIVE = 2
-SHOW_STATE_DONE = 3
 
-ACTION_DONE_STATE = 0
-ACTION_EDIT = 1
-ACTION_DELETE = 2
 
 if not os.path.exists(DEFAULT_TODO_PATH):
   os.makedirs(DEFAULT_TODO_PATH)
@@ -17,28 +11,29 @@ __file__ = os.path.normpath(os.path.abspath(__file__))
 __path__ = os.path.dirname(__file__)
 
 
-TASK_OPTIONS = [
-  ['', 'No priority'],
-  ['(A) ', 'Set a todo to priority A'],
-  ['(B) ', 'Set a todo to priority B'],
-  ['(C) ', 'Set a todo to priority C'],
-  ['(D) ', 'Set a todo to priority D']
-]
+
 
 
 class TodoFile(object):
 
-  parent_file_path = ''
+  SHOW_STATE_ALL = 1
+  SHOW_STATE_ACTIVE = 2
+  SHOW_STATE_DONE = 3
 
-  parent_file_parts = None
+  ACTION_DONE_STATE = 0
+  ACTION_EDIT = 1
+  ACTION_DELETE = 2
 
-  parent_filename = ''
+  TASK_OPTIONS = [
+    ['', 'No priority'],
+    ['(A) ', 'Set a todo to priority A'],
+    ['(B) ', 'Set a todo to priority B'],
+    ['(C) ', 'Set a todo to priority C'],
+    ['(D) ', 'Set a todo to priority D']
+  ]
 
-  output_filepath = ''
 
-  lines = None
-
-  file_handler = None
+ 
 
   total_todos = 0
 
@@ -46,36 +41,37 @@ class TodoFile(object):
 
   done_todos = []
 
-  def __init__(self, command, settings):
-    self.parent_file_path = command.window.active_view().file_name()
+  def __init__(self, parent_file_path, settings, show_state=SHOW_STATE_ALL):
+    self.parent_file_path = parent_file_path
     self.parent_file_parts = self.parent_file_path.split(os.path.sep)
     self.parent_filename = self.parent_file_parts[len(self.parent_file_parts) - 1]
 
-    self.output_filepath = '%s%s%s-%s.%s' % (DEFAULT_TODO_PATH, os.path.sep, 'todo', self.parent_filename, 'txt')
+    self.home_path = settings.get('todo_path') or DEFAULT_TODO_PATH
+    self.output_filepath = '%s%s%s-%s.%s' % (self.home_path, os.path.sep, 'todo', self.parent_filename, 'txt')
+
+    self.show_state = show_state 
 
     print self.output_filepath
     try:
       if not os.path.exists(DEFAULT_TODO_PATH):
         os.makedirs(DEFAULT_TODO_PATH)
       self.open_file('r')
-      self.lines = self.file_handler.readlines()
+      self.process_lines()
       self.close_file()
 
-      self.process_lines()
-
     except IOError:
-      return false
-    #path_parts = command.window.active_view().file_name().split(os.path.sep)
-    #self.filename = '%s' % path_parts[len(path_parts) - 1]
+      return None
 
   def process_lines(self):
-    self.total_todos = sum(1 for line in self.lines)
+    self.lines = self.file_handler.readlines() or []
+    if len(self.lines) > 0:
+      self.total_todos = sum(1 for line in self.lines)
 
-    for line in self.lines:
-      if line[:1] == '*':
-        self.done_todos.append(line)
-      else:
-        self.active_todos.append(line)
+      for line in self.lines:
+        if line[:1] == '*':
+          self.done_todos.append(line)
+        else:
+          self.active_todos.append(line)
 
   def open_file(self, mode):
     self.file_handler = open(self.output_filepath, mode)
@@ -111,7 +107,6 @@ class TodoFile(object):
 
   def generate_list(self, show_state):
     self.current_line_index = 0
-
     self.current_display_mapping = []
     self.current_display_items = []
 
@@ -130,7 +125,7 @@ class TodoFile(object):
     if len(self.current_display_items) > 0:
       return self.current_display_items
     else:
-      return ['No todos for this file', 'Select the Todo: Add option to begin adding']
+      return ['No todos for this file, Select the Todo: Add option to begin adding']
 
   def mark_task(self, task_number):
 
@@ -223,8 +218,11 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     """
     if option == -1:
       pass
-    self.task_position = option
+    self.todo_file.task_position = option
     self.window.show_quick_panel(['Mark (Un)Done', 'Edit', 'Delete'], self.on_task_action)
+
+  def on_none_selection(self, option):
+    pass
 
   def run(self, show_state):
     """
@@ -236,19 +234,18 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     or SHOW_STATE_DONE
     """
     # Reset values
-    self.show_state = show_state
-
-    self.line_mappings = []
-
-    self.task_position = None
-
     settings = sublime.load_settings('TodoManager.sublime-settings')
+    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, show_state)
 
-    todo = TodoFile(self, settings)
-    if todo:
-      self.todo_file = todo
+    message = ''
+    items = []
+    if self.todo_file.total_todos > 0:
+      message += 'Total active todos: %d Total done todos: %s Total todos: %d' % ( len(self.todo_file.active_todos), len(self.todo_file.done_todos), self.todo_file.total_todos )
+      items = self.todo_file.generate_list(show_state)
+      self.window.show_quick_panel(items, self.on_task_selection)
     else:
-      sublime.error_message('Error opening file for %s' % self.window.active_view().file_name())
-      pass
-    self.window.active_view().set_status('todomanager', 'Total active todos: %d Total done todos: %s Total todos: %d' % ( len(self.todo_file.active_todos), len(self.todo_file.done_todos), self.todo_file.total_todos ))
-    self.window.show_quick_panel(self.todo_file.generate_list(self.show_state), self.on_task_selection)
+      message += 'Error opening file for %s' % self.window.active_view().file_name()
+      items = [ ['No tasks for this file', 'Add a task to interact with the list' ] ]
+      self.window.show_quick_panel(items, self.on_none_selection)
+    self.window.active_view().set_status('todomanager', message)
+    
