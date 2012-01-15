@@ -20,6 +20,12 @@ class TodoFile(object):
   ACTION_EDIT = 1
   ACTION_DELETE = 2
 
+  ACTIONS = [
+    ['Toggle done status', 'Change the done status of the selected item'],
+    ['Edit', 'Edit the raw selected todo line'],
+    ['Delete', 'Delete the todo from the file']
+  ]
+
   # Priority List
   TODO_OPTIONS = [
     ['', 'No priority'],
@@ -27,6 +33,11 @@ class TodoFile(object):
     ['B', 'Set a todo to priority B'],
     ['C', 'Set a todo to priority C'],
     ['D', 'Set a todo to priority D']
+  ]
+
+  PURGE_OPTIONS = [
+    ['Confirm Purge', 'This will purge all your done todo items from the list'],
+    ['Cancel Purge', 'Cancel purging done todo items']
   ]
 
   def __init__(self, parent_file_path, settings, show_state=TodoFile.SHOW_STATE_ALL):
@@ -376,7 +387,7 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     """
     if option > 0 or option == 0 and self.todo_file.total_todos > 0:
       self.todo_file.todo_position = option
-      self.window.show_quick_panel(['Mark (Un)Done', 'Edit', 'Delete'], self.on_todo_action)
+      self.window.show_quick_panel(TodoFile.ACTIONS, self.on_todo_action)
     else:
       pass
 
@@ -406,13 +417,13 @@ class TodoManagerPurge(sublime_plugin.WindowCommand):
     if option > -1:
       if option == 0:
         self.todo_file.purge_list()
-    print option
+    else:
+      pass
 
   def run(self):
     settings = sublime.load_settings('TodoManager.sublime-settings')
     self.todo_file = TodoFile(self.window.active_view().file_name(), settings, TodoFile.SHOW_STATE_DONE)
-
-    self.window.show_quick_panel([ ['Confirm Purge', 'This will purge all your done todo items from the list'], ['Cancel Purge', 'Cancel purging done todo items'] ], self.on_purge_selection)
+    self.window.show_quick_panel(TodoFile.PURGE_OPTIONS, self.on_purge_selection)
 
 
 class TodoManagerOpen(sublime_plugin.WindowCommand):
@@ -423,8 +434,6 @@ class TodoManagerOpen(sublime_plugin.WindowCommand):
     """
     Open a new window with the todo file of the current open file
     """
-
     settings = sublime.load_settings('TodoManager.sublime-settings')
     self.todo_file = TodoFile(self.window.active_view().file_name(), settings, TodoFile.SHOW_STATE_DONE)
-
     self.window.open_file(self.todo_file.output_filepath)
