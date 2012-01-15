@@ -10,18 +10,12 @@ class TodoFile(object):
   # Default todo path if the user doesn't overide it
   DEFAULT_TODO_PATH = os.path.expanduser(os.path.join('~', '.todomanager'))
 
-  # Show states
+  # Show states, called by commands and key bindings
   SHOW_STATE_ALL = 1
   SHOW_STATE_ACTIVE = 2
   SHOW_STATE_DONE = 3
 
-  # Todo actions
-  ACTION_DONE_STATE = 0
-  ACTION_EDIT = 1
-  ACTION_MOVE = 2
-  ACTION_DELETE = 3
-  
-
+  # Actions available to the individial todo item menu
   ACTIONS = [
     ['Toggle done status', 'Change the done status of the selected item'],
     ['Edit', 'Edit the raw selected todo line'],
@@ -29,6 +23,22 @@ class TodoFile(object):
     ['Delete', 'Delete the todo from the file']
   ]
 
+  # Todo action mappings
+  ACTION_DONE_STATE = 0
+  ACTION_EDIT = 1
+  ACTION_MOVE = 2
+  ACTION_DELETE = 3
+
+  # Move options
+  MOVE_OPTIONS = [
+    ['Up', 'Move the todo item up the list'],
+    ['Down', 'Move the todo item down the list']
+  ]
+
+  # Move mappings
+  MOVE_UP = 0
+  MOVE_DOWN = 1
+  
   # Priority List
   TODO_OPTIONS = [
     ['', 'No priority'],
@@ -38,6 +48,7 @@ class TodoFile(object):
     ['D', 'Set a todo to priority D']
   ]
 
+  # Purge options
   PURGE_OPTIONS = [
     ['Confirm Purge', 'This will purge all your done todo items from the list'],
     ['Cancel Purge', 'Cancel purging done todo items']
@@ -126,11 +137,6 @@ class TodoFile(object):
     self.file_handler.writelines(self.lines)
     self.close_file()
 
-  # def write_file(self):
-  #   self.open_file('w')
-  #   line_position = self.line_mappings[self.todo_position][1]
-  #   line = self.lines[line_position]
-
   def create_header_line(self, line, line_index):
     """
     Extract out information from a todo to generate the list item
@@ -192,9 +198,13 @@ class TodoFile(object):
     self.write()
     self.process_lines()
 
-  def move_line(self, direction = 'down'):
+  def move_line(self, direction):
+    """
+    Move the current selected todo up or down based on the direction
+    variable, 0 is up 1 is down
+    """
     line_number = self.current_display_mapping[self.todo_position]
-    new_index = line_number + (1 if direction == 'down' else -1)
+    new_index = line_number + (1 if direction == TodoFile.MOVE_DOWN else -1)
     
     if new_index > -1:
       self.lines.insert(new_index, self.lines.pop(line_number))
@@ -242,12 +252,10 @@ class TodoFile(object):
     self.lines.append("%s\n" % new_todo)
     self.write()
 
-
 class TodoManagerAdd(sublime_plugin.WindowCommand):
   """
   Command to add a todo
   """
-
   def get_current_function(self):
     """
     Helper class to get the current function for the block of code the cursor is in
@@ -349,7 +357,6 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
 
     self.window.show_quick_panel(TodoFile.TODO_OPTIONS, self.on_priority)
     
-
 class TodoManagerList(sublime_plugin.WindowCommand):
   """
   WindowCommand for the following features:
@@ -378,11 +385,11 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     pass
 
   def on_move_action(self, option):
+    """
+    Calls the function to move the selected line up or down based on the option
+    """
     if option > -1:
-      if option == 0:
-        self.todo_file.move_line('up')
-      else:
-        self.todo_file.move_line('down')
+      self.todo_file.move_line(option)
     else:
       pass
 
@@ -399,7 +406,7 @@ class TodoManagerList(sublime_plugin.WindowCommand):
       elif option == TodoFile.ACTION_DELETE:
         self.todo_file.delete_todo(self.todo_file.todo_position)
       elif option == TodoFile.ACTION_MOVE:
-        self.window.show_quick_panel([ ['Up', 'Move the todo item up the list'], ['Down', 'Move the todo item down the list'] ], self.on_move_action)
+        self.window.show_quick_panel(TodoFile.MOVE_OPTIONS, self.on_move_action)
     else:
       pass
      
@@ -430,7 +437,6 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     items = self.todo_file.generate_list(show_state)
     self.window.show_quick_panel(items, self.on_todo_selection)
 
-
 class TodoManagerPurge(sublime_plugin.WindowCommand):
   """
   Command to purge all done entries from a list
@@ -443,10 +449,12 @@ class TodoManagerPurge(sublime_plugin.WindowCommand):
       pass
 
   def run(self):
+    """
+    Opens a options quick panel with confirm options to purge the file
+    """
     settings = sublime.load_settings('TodoManager.sublime-settings')
     self.todo_file = TodoFile(self.window.active_view().file_name(), settings, TodoFile.SHOW_STATE_DONE)
     self.window.show_quick_panel(TodoFile.PURGE_OPTIONS, self.on_purge_selection)
-
 
 class TodoManagerOpen(sublime_plugin.WindowCommand):
   """
