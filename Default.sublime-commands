@@ -1,10 +1,7 @@
 [
   {
     "caption": "Todo: Add",
-    "command": "todo_manager_add",
-    "args": {
-      "at_line": false
-    }
+    "command": "todo_manager_add"
   },
   {
     "caption": "Todo: Add-at-line",
@@ -14,12 +11,11 @@
     }
   },
   {
-    "caption": "Todo: Edit",
-    "command": "todo_manager_edit"
-  },
-  {
-    "caption": "Todo: Delete",
-    "command": "todo_manager_delete"
+    "caption": "Todo: Add-at-function",
+    "command": "todo_manager_add",
+    "args": {
+      "at_function": true
+    }
   },
   {
     "caption": "Todo: List All",
@@ -45,5 +41,9 @@
   {
     "caption": "Todo: Open File",
     "command": "todo_manager_open"
-  }
+  },
+    {
+    "caption": "Todo: Purge",
+    "command": "todo_manager_purge"
+  },
 ]

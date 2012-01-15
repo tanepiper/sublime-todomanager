@@ -1,9 +1,10 @@
 [
-  { "keys": ["super+ctrl+t","super+ctrl+a"], "command": "todo_manager_add", "args": { "at_line": false } },
+  { "keys": ["super+ctrl+t","super+ctrl+a"], "command": "todo_manager_add" },
   { "keys": ["super+ctrl+t","super+ctrl+s"], "command": "todo_manager_add", "args": { "at_line": true } },
-  { "keys": ["super+ctrl+t","super+ctrl+e"], "command": "todo_manager_edit" },
-  { "keys": ["super+ctrl+t","super+ctrl+d"], "command": "todo_manager_delete" },
-  { "keys": ["super+ctrl+t","super+ctrl+k"], "command": "todo_manager_list", "args": { "show_done": "true" } },
-  { "keys": ["super+ctrl+t","super+ctrl+l"], "command": "todo_manager_list", "args": { "show_done": "false" } },
-  { "keys": ["super+ctrl+t","super+ctrl+o"], "command": "todo_manager_open" }
+  { "keys": ["super+ctrl+t","super+ctrl+f"], "command": "todo_manager_add", "args": { "at_function": true } },
+  { "keys": ["super+ctrl+t","super+ctrl+j"], "command": "todo_manager_list", "args": { "show_state": 0 } },
+  { "keys": ["super+ctrl+t","super+ctrl+l"], "command": "todo_manager_list", "args": { "show_state": 2 } },
+  { "keys": ["super+ctrl+t","super+ctrl+k"], "command": "todo_manager_list", "args": { "show_state": 1 } },
+  { "keys": ["super+ctrl+t","super+ctrl+o"], "command": "todo_manager_open" },
+  { "keys": ["super+ctrl+t","super+ctrl+p"], "command": "todo_manager_purge" }
 ]
