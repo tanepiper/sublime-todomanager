@@ -45,5 +45,5 @@
     {
     "caption": "Todo: Purge",
     "command": "todo_manager_purge"
-  },
+  }
 ]
