@@ -23,10 +23,10 @@ class TodoFile(object):
   # Priority List
   TODO_OPTIONS = [
     ['', 'No priority'],
-    ['A ', 'Set a todo to priority A'],
-    ['B ', 'Set a todo to priority B'],
-    ['C ', 'Set a todo to priority C'],
-    ['D ', 'Set a todo to priority D']
+    ['A', 'Set a todo to priority A'],
+    ['B', 'Set a todo to priority B'],
+    ['C', 'Set a todo to priority C'],
+    ['D', 'Set a todo to priority D']
   ]
 
   def __init__(self, parent_file_path, settings, show_state=TodoFile.SHOW_STATE_ALL):
@@ -217,7 +217,7 @@ class TodoFile(object):
     self.write()
 
   def add_new_todo(self, new_todo):
-    self.lines.append(new_todo)
+    self.lines.append("%s\n" % new_todo)
     self.write()
 
 
