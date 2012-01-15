@@ -18,11 +18,14 @@ class TodoFile(object):
   # Todo actions
   ACTION_DONE_STATE = 0
   ACTION_EDIT = 1
-  ACTION_DELETE = 2
+  ACTION_MOVE = 2
+  ACTION_DELETE = 3
+  
 
   ACTIONS = [
     ['Toggle done status', 'Change the done status of the selected item'],
     ['Edit', 'Edit the raw selected todo line'],
+    ['Move', 'Move the item up or down the list'],
     ['Delete', 'Delete the todo from the file']
   ]
 
@@ -188,6 +191,14 @@ class TodoFile(object):
 
     self.write()
     self.process_lines()
+
+  def move_line(self, direction = 'down'):
+    line_number = self.current_display_mapping[self.todo_position]
+    new_index = line_number + (1 if direction == 'down' else -1)
+    
+    if new_index > -1:
+      self.lines.insert(new_index, self.lines.pop(line_number))
+      self.write()
 
   def mark_todo(self, todo_number):
     """
@@ -366,6 +377,15 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     """
     pass
 
+  def on_move_action(self, option):
+    if option > -1:
+      if option == 0:
+        self.todo_file.move_line('up')
+      else:
+        self.todo_file.move_line('down')
+    else:
+      pass
+
   def on_todo_action(self, option):
     """
     Calls the appropriate functionality to continue based on action selection. Action is
@@ -378,6 +398,8 @@ class TodoManagerList(sublime_plugin.WindowCommand):
         self.window.show_input_panel("Edit Todo",  self.todo_file.get_line(self.todo_file.todo_position), self.on_edit_todo, None, self.on_cancel)
       elif option == TodoFile.ACTION_DELETE:
         self.todo_file.delete_todo(self.todo_file.todo_position)
+      elif option == TodoFile.ACTION_MOVE:
+        self.window.show_quick_panel([ ['Up', 'Move the todo item up the list'], ['Down', 'Move the todo item down the list'] ], self.on_move_action)
     else:
       pass
      

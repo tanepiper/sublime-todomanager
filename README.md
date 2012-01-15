@@ -2,33 +2,78 @@
 Sublime Text 2 Todo Manager
 ================
 
-https://github.com/tanepiper/sublime-todomanager
+Sourcecode: https://github.com/tanepiper/sublime-todomanager
+Sublime Text 2 forum thread: http://www.sublimetext.com/forum/viewtopic.php?f=5&t=4491
+Release: 1.1.4
+Author: Tane Piper
 
-My new plugin for Sublime Text 2. It's a simple Todo manager that is on a per-file basis.
-
-  Release:1.1.0
+Is available via the package manager for install.
 
 Commands available through the command palate are:
 
-  * Todo: Add/Add at Line/Add at Function
-  * Todo: List All/Active/Done
-  * Todo: Open file
-  * Todo: Purge
+* Todo: Add/Add at Line/Add at Function
+* Todo: List All/Active/Done
+* Todo: Open file
+* Todo: Purge
 
 All have keybindings for Windows, Mac and Linux (untested).
 
-When you now go into a list item, you can mark it done or undone, can simply edit it or delete it.  Add at line will automatically set the line number in the current file selection (but you can edit it in the steps), same with add at function (it will select the function name of the code block you are in)
+Adding a todo
+-------------
 
-When adding a new task you will first be presented with a list of priority settings, you can hit Esc if you don't want one, or select none - but I give a sensible list of A-D here.  Next you enter the text of the todo item, next the line mapping.  Line mapping and function name is not in the todo.txt format but is stored with a `~` character for line number and `&` character for function and I hope to add support for this in the future.
+Adding a todo is done in one simple way, but provides two convenience functions to speed up input.
+The first way is to just add a todo `(Ctrl+Alt+t, Ctrl+Alt+a)` - this takes you through the following steps
 
-Adding projects and contexts allows you to tag items with a project (`+`) prefix or context (`@`) prefix - just enter them space separated, you don't need to add the `+` or `@` these will be automatically added.  Marked items are marked with a `*` at the beginning.  The plugin uses the autosearch facility of the query panel to allow you to filter content. I'll be looking to add date support at a later date as well.
+1. Select a piority from A-D, or none
+2. Enter the task text
+3. Enter the line number `~' of the todo
+4. Enter the function name '&' of the todo
+5. Enter any projects entries `+` as space seperated entries
+6. Enter any contexts entries `@` as space seperated entries
 
-Editing, currently you will be presented with just the whole text string of the todo to edit - and delete is pretty self explanatory.
+The line will then be appended to the bottom of the list.  The two additional functions are Add-at-line `(Ctrl+Alt+t,Ctrl+Alt+s)` and Add-at-function `(Ctrl+Alt+t,Ctrl+Alt+f)` which autofill the lines or function box depending on which is selected.  The function name is always the block of code you are in.
 
-The plugin creates a .todomanager folder in your home directory to keep them self contained, in the name format 'todo-<filename-md5>.txt' base on the current active file - this means you have a todo per file.  There is plans to add search over todo files as well.
+Viewing and filtering todos
+---------------------------
 
-You can purge all done items with the Todo: Purge command, this will confirm the action then delete all entries marked done.
+Viewing todos is done throw the List All `(Ctrl+Alt+t,Ctrl+Alt+j)`, Active `(Ctrl+Alt+T,Ctrl+Alt+l)` and Done `(Ctrl+Alt+t,Ctrl+Alt+k)` commands.
 
-Is available via the package manager
+When you view a list, you can navigate up and down the items.  Pressing enter on any item will present the item
+menu, with the following options
 
-Comments and suggestions welcome
+* Toggle done status - Change the todo display from active to done, or vice-versa
+* Edit - Edit the todo in raw mode, a text box with the full todo item
+* Move - Move the item up or down the list, you will be presented with Up or Down options
+* Delete - Delete the item from the list, you will be asked to confirm this
+
+To filter items, when you have a list open the command palate allows further keypresses.  For example if you have the line:
+
+  * (A) Finish off refactoring ~45 +MyProject @refactor @release
+
+If you wanted to find this item by it's line number you would type `~45` and the list will be filtered to display only
+this item, or all items with a `~45` next to them.
+
+Purge done items and opening files
+----------------------------------
+
+Purging done items `(Ctrl+Alt+t,Ctrl+Alt+p)` removes all done items from the todo file.  You will be asked before you want to do this.
+
+Opening the file `(Ctrl+Alt+t,Ctrl+Alt+o)` opens the file as a plain text file to be edited in Sublime Text 2
+
+File location
+-----------------------------
+
+In the settings file, you can change the `todo_home` option, currently set to none.  This is the location you
+wish to save the files - it might be somewhere like a dropbox folder.
+
+The default folder is `$HOME/.todomanager`
+
+Files are kept in the name format 'todo-<filename-md5>.txt' base on the current active file - this means you have a todo per file.  If you want the contents of the todo file, it's best to just open it via the command.
+
+Future features
+---------------
+
+* UI for changing priority
+* Search over todo file contents
+* List all todo files
+* Provide way to mark source with todo information
