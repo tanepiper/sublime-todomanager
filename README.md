@@ -2,10 +2,10 @@
 Sublime Text 2 Todo Manager
 ================
 
-Sourcecode: https://github.com/tanepiper/sublime-todomanager
-Sublime Text 2 forum thread: http://www.sublimetext.com/forum/viewtopic.php?f=5&t=4491
-Release: 1.1.4
-Author: Tane Piper
+* Sourcecode: https://github.com/tanepiper/sublime-todomanager
+* Sublime Text 2 forum thread: http://www.sublimetext.com/forum/viewtopic.php?f=5&t=4491
+* Release: 1.1.4
+* Author: Tane Piper
 
 Is available via the package manager for install.
 
@@ -26,8 +26,8 @@ The first way is to just add a todo `(Ctrl+Alt+t, Ctrl+Alt+a)` - this takes you 
 
 1. Select a piority from A-D, or none
 2. Enter the task text
-3. Enter the line number `~' of the todo
-4. Enter the function name '&' of the todo
+3. Enter the line number `~` of the todo
+4. Enter the function name `&` of the todo
 5. Enter any projects entries `+` as space seperated entries
 6. Enter any contexts entries `@` as space seperated entries
 
@@ -48,7 +48,7 @@ menu, with the following options
 
 To filter items, when you have a list open the command palate allows further keypresses.  For example if you have the line:
 
-  * (A) Finish off refactoring ~45 +MyProject @refactor @release
+  `* (A) Finish off refactoring ~45 +MyProject @refactor @release`
 
 If you wanted to find this item by it's line number you would type `~45` and the list will be filtered to display only
 this item, or all items with a `~45` next to them.
