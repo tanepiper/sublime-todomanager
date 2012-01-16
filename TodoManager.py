@@ -340,22 +340,23 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
     """
     Start a new todo entry
     """
-    self.at_line = at_line
-    self.at_function = at_function
+    if self.window.active_view():
+      self.at_line = at_line
+      self.at_function = at_function
 
-    settings = sublime.load_settings('TodoManager.sublime-settings')
-    self.todo_file = TodoFile(self.window.active_view().file_name(), settings)
+      settings = sublime.load_settings('TodoManager.sublime-settings')
+      self.todo_file = TodoFile(self.window.active_view().file_name(), settings)
 
-    self.output_string = ''
+      self.output_string = ''
 
-    if at_line is True:
-      line, column = self.window.active_view().rowcol(self.window.active_view().sel()[0].begin())
-      self.at_line = line
+      if at_line is True:
+        line, column = self.window.active_view().rowcol(self.window.active_view().sel()[0].begin())
+        self.at_line = line
 
-    if at_function and self.get_current_function() is not None:
-      self.at_function = self.get_current_function()
+      if at_function and self.get_current_function() is not None:
+        self.at_function = self.get_current_function()
 
-    self.window.show_quick_panel(TODO_OPTIONS, self.on_priority)
+      self.window.show_quick_panel(TODO_OPTIONS, self.on_priority)
 
 class TodoManagerList(sublime_plugin.WindowCommand):
   """
@@ -429,13 +430,14 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     Takes argument for show state which determines if SHOW_STATE_ALL, SHOW_STATE_ACTIVE
     or SHOW_STATE_DONE
     """
-    settings = sublime.load_settings('TodoManager.sublime-settings')
-    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, show_state or SHOW_STATE_ALL)
+    if self.window.active_view():
+      settings = sublime.load_settings('TodoManager.sublime-settings')
+      self.todo_file = TodoFile(self.window.active_view().file_name(), settings, show_state or SHOW_STATE_ALL)
 
-    message = 'Total active todos: %d Total done todos: %s Total todos: %d' % ( len(self.todo_file.active_todos), len(self.todo_file.done_todos), self.todo_file.total_todos )
-    self.window.active_view().set_status('todomanager', message)
-    items = self.todo_file.generate_list(show_state)
-    self.window.show_quick_panel(items, self.on_todo_selection)
+      message = 'Total active todos: %d Total done todos: %s Total todos: %d' % ( len(self.todo_file.active_todos), len(self.todo_file.done_todos), self.todo_file.total_todos )
+      self.window.active_view().set_status('todomanager', message)
+      items = self.todo_file.generate_list(show_state)
+      self.window.show_quick_panel(items, self.on_todo_selection)
 
 class TodoManagerPurge(sublime_plugin.WindowCommand):
   """
@@ -452,9 +454,11 @@ class TodoManagerPurge(sublime_plugin.WindowCommand):
     """
     Opens a options quick panel with confirm options to purge the file
     """
-    settings = sublime.load_settings('TodoManager.sublime-settings')
-    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, SHOW_STATE_DONE)
-    self.window.show_quick_panel(PURGE_OPTIONS, self.on_purge_selection)
+
+    if self.window.active_view():
+      settings = sublime.load_settings('TodoManager.sublime-settings')
+      self.todo_file = TodoFile(self.window.active_view().file_name(), settings, SHOW_STATE_DONE)
+      self.window.show_quick_panel(PURGE_OPTIONS, self.on_purge_selection)
 
 class TodoManagerOpen(sublime_plugin.WindowCommand):
   """
@@ -464,6 +468,7 @@ class TodoManagerOpen(sublime_plugin.WindowCommand):
     """
     Open a new window with the todo file of the current open file
     """
-    settings = sublime.load_settings('TodoManager.sublime-settings')
-    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, SHOW_STATE_DONE)
-    self.window.open_file(self.todo_file.output_filepath)
+    if self.window.active_view():
+      settings = sublime.load_settings('TodoManager.sublime-settings')
+      self.todo_file = TodoFile(self.window.active_view().file_name(), settings, SHOW_STATE_DONE)
+      self.window.open_file(self.todo_file.output_filepath)
