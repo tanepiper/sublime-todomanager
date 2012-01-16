@@ -1,0 +1,6 @@
+[
+  { "caption": "-"  },
+  { "caption": "Todo: Add", "command": "todo_manager_add" },
+  { "caption": "Todo: Add-at-line", "command": "todo_manager_add", "args": { "at_line": true } },
+  { "caption": "Todo: Add-at-function", "command": "todo_manager_add", "args": { "at_function": true } }
+]

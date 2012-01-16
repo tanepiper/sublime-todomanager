@@ -1,5 +1,10 @@
 {
+  // The todo path is where the todo files are saved on your hard drive
   "todo_path": null,
-  "add_start_date": true,
-  "add_end_date": true
+
+  // FOR VERSION 1.2 - Add support for todo start and end dates
+  "add_start_date": false,
+
+  // FOR VERSION 1.2 - Add support for todo start and end dates
+  "add_end_date": false
 }

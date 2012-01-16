@@ -1,5 +1,52 @@
 import os, sublime, sublime_plugin, re, hashlib
 
+# Default todo path if the user doesn't overide it
+DEFAULT_TODO_PATH = os.path.expanduser(os.path.join('~', '.todomanager'))
+
+# Show states, called by commands and key bindings
+SHOW_STATE_ALL = 1
+SHOW_STATE_ACTIVE = 2
+SHOW_STATE_DONE = 3
+
+# Actions available to the individial todo item menu
+ACTIONS = [
+  ['Toggle done status', 'Change the done status of the selected item'],
+  ['Edit', 'Edit the raw selected todo line'],
+  ['Move', 'Move the item up or down the list'],
+  ['Delete', 'Delete the todo from the file']
+]
+
+# Todo action mappings
+ACTION_DONE_STATE = 0
+ACTION_EDIT = 1
+ACTION_MOVE = 2
+ACTION_DELETE = 3
+
+# Move options
+MOVE_OPTIONS = [
+  ['Up', 'Move the todo item up the list'],
+  ['Down', 'Move the todo item down the list']
+]
+
+# Move mappings
+MOVE_UP = 0
+MOVE_DOWN = 1
+
+# Priority List
+TODO_OPTIONS = [
+  ['', 'No priority'],
+  ['A', 'Set a todo to priority A'],
+  ['B', 'Set a todo to priority B'],
+  ['C', 'Set a todo to priority C'],
+  ['D', 'Set a todo to priority D']
+]
+
+# Purge options
+PURGE_OPTIONS = [
+  ['Confirm Purge', 'This will purge all your done todo items from the list'],
+  ['Cancel Purge', 'Cancel purging done todo items']
+]
+
 class TodoFile(object):
   """
   The main todo class - this loads in the current todo file and loads all the lines
@@ -7,54 +54,7 @@ class TodoFile(object):
   with a Todo file are members of this class
   """
 
-  # Default todo path if the user doesn't overide it
-  DEFAULT_TODO_PATH = os.path.expanduser(os.path.join('~', '.todomanager'))
-
-  # Show states, called by commands and key bindings
-  SHOW_STATE_ALL = 1
-  SHOW_STATE_ACTIVE = 2
-  SHOW_STATE_DONE = 3
-
-  # Actions available to the individial todo item menu
-  ACTIONS = [
-    ['Toggle done status', 'Change the done status of the selected item'],
-    ['Edit', 'Edit the raw selected todo line'],
-    ['Move', 'Move the item up or down the list'],
-    ['Delete', 'Delete the todo from the file']
-  ]
-
-  # Todo action mappings
-  ACTION_DONE_STATE = 0
-  ACTION_EDIT = 1
-  ACTION_MOVE = 2
-  ACTION_DELETE = 3
-
-  # Move options
-  MOVE_OPTIONS = [
-    ['Up', 'Move the todo item up the list'],
-    ['Down', 'Move the todo item down the list']
-  ]
-
-  # Move mappings
-  MOVE_UP = 0
-  MOVE_DOWN = 1
-
-  # Priority List
-  TODO_OPTIONS = [
-    ['', 'No priority'],
-    ['A', 'Set a todo to priority A'],
-    ['B', 'Set a todo to priority B'],
-    ['C', 'Set a todo to priority C'],
-    ['D', 'Set a todo to priority D']
-  ]
-
-  # Purge options
-  PURGE_OPTIONS = [
-    ['Confirm Purge', 'This will purge all your done todo items from the list'],
-    ['Cancel Purge', 'Cancel purging done todo items']
-  ]
-
-  def __init__(self, parent_file_path, settings, show_state=1):
+  def __init__(self, parent_file_path, settings, show_state = SHOW_STATE_ALL):
     """
     Initialise the Todo file object
     """
@@ -67,7 +67,7 @@ class TodoFile(object):
     self.parent_filename = self.parent_file_parts[len(self.parent_file_parts) - 1]
 
     # Home path to save todo, either set or default
-    self.home_path = settings.get('todo_path') or TodoFile.DEFAULT_TODO_PATH
+    self.home_path = settings.get('todo_path') or DEFAULT_TODO_PATH
 
     # Output file name for the todo file
     self.output_filepath = '%s%s%s' % (self.home_path, os.path.sep, self.generate_filename())
@@ -174,13 +174,13 @@ class TodoFile(object):
 
     if self.total_todos > 0:
       for line in self.lines:
-        if show_state == TodoFile.SHOW_STATE_DONE and line[:1] == '*':
+        if show_state == SHOW_STATE_DONE and line[:1] == '*':
           self.current_display_mapping.append(self.current_line_index)
           self.current_display_items.append([self.create_header_line(line, self.current_line_index), line])
-        elif show_state == TodoFile.SHOW_STATE_ACTIVE and line[:1] != '*':
+        elif show_state == SHOW_STATE_ACTIVE and line[:1] != '*':
           self.current_display_mapping.append(self.current_line_index)
           self.current_display_items.append([self.create_header_line(line, self.current_line_index), line])
-        elif show_state == TodoFile.SHOW_STATE_ALL:
+        elif show_state == SHOW_STATE_ALL:
           self.current_display_mapping.append(self.current_line_index)
           self.current_display_items.append([self.create_header_line(line, self.current_line_index), line])
         self.current_line_index = self.current_line_index + 1
@@ -204,7 +204,7 @@ class TodoFile(object):
     variable, 0 is up 1 is down
     """
     line_number = self.current_display_mapping[self.todo_position]
-    new_index = line_number + (1 if direction == TodoFile.MOVE_DOWN else -1)
+    new_index = line_number + (1 if direction == MOVE_DOWN else -1)
 
     if new_index > -1:
       self.lines.insert(new_index, self.lines.pop(line_number))
@@ -333,7 +333,7 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
     Add the priority to the todo
     """
     if option > 0:
-      self.output_string += '(%s)' % TodoFile.TODO_OPTIONS[option][0]
+      self.output_string += '(%s)' % TODO_OPTIONS[option][0]
     self.window.show_input_panel("Enter the text of the todo", '', self.on_todo_entry, None, self.on_cancel)
 
   def run(self, at_line = False, at_function = False):
@@ -355,7 +355,7 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
     if at_function and self.get_current_function() is not None:
       self.at_function = self.get_current_function()
 
-    self.window.show_quick_panel(TodoFile.TODO_OPTIONS, self.on_priority)
+    self.window.show_quick_panel(TODO_OPTIONS, self.on_priority)
 
 class TodoManagerList(sublime_plugin.WindowCommand):
   """
@@ -399,14 +399,14 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     one of ACTION_DONE_STATE, ACTION_EDIT or ACTION_DELETE
     """
     if option > -1:
-      if option == TodoFile.ACTION_DONE_STATE:
+      if option == ACTION_DONE_STATE:
         self.todo_file.mark_todo(self.todo_file.todo_position)
-      elif option == TodoFile.ACTION_EDIT:
+      elif option == ACTION_EDIT:
         self.window.show_input_panel("Edit Todo",  self.todo_file.get_line(self.todo_file.todo_position), self.on_edit_todo, None, self.on_cancel)
-      elif option == TodoFile.ACTION_DELETE:
+      elif option == ACTION_DELETE:
         self.todo_file.delete_todo(self.todo_file.todo_position)
-      elif option == TodoFile.ACTION_MOVE:
-        self.window.show_quick_panel(TodoFile.MOVE_OPTIONS, self.on_move_action)
+      elif option == ACTION_MOVE:
+        self.window.show_quick_panel(MOVE_OPTIONS, self.on_move_action)
     else:
       pass
 
@@ -416,7 +416,7 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     """
     if option > 0 or option == 0 and self.todo_file.total_todos > 0:
       self.todo_file.todo_position = option
-      self.window.show_quick_panel(TodoFile.ACTIONS, self.on_todo_action)
+      self.window.show_quick_panel(ACTIONS, self.on_todo_action)
     else:
       pass
 
@@ -430,7 +430,7 @@ class TodoManagerList(sublime_plugin.WindowCommand):
     or SHOW_STATE_DONE
     """
     settings = sublime.load_settings('TodoManager.sublime-settings')
-    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, show_state or TodoFile.SHOW_STATE_ALL)
+    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, show_state or SHOW_STATE_ALL)
 
     message = 'Total active todos: %d Total done todos: %s Total todos: %d' % ( len(self.todo_file.active_todos), len(self.todo_file.done_todos), self.todo_file.total_todos )
     self.window.active_view().set_status('todomanager', message)
@@ -453,8 +453,8 @@ class TodoManagerPurge(sublime_plugin.WindowCommand):
     Opens a options quick panel with confirm options to purge the file
     """
     settings = sublime.load_settings('TodoManager.sublime-settings')
-    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, TodoFile.SHOW_STATE_DONE)
-    self.window.show_quick_panel(TodoFile.PURGE_OPTIONS, self.on_purge_selection)
+    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, SHOW_STATE_DONE)
+    self.window.show_quick_panel(PURGE_OPTIONS, self.on_purge_selection)
 
 class TodoManagerOpen(sublime_plugin.WindowCommand):
   """
@@ -465,5 +465,5 @@ class TodoManagerOpen(sublime_plugin.WindowCommand):
     Open a new window with the todo file of the current open file
     """
     settings = sublime.load_settings('TodoManager.sublime-settings')
-    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, TodoFile.SHOW_STATE_DONE)
+    self.todo_file = TodoFile(self.window.active_view().file_name(), settings, SHOW_STATE_DONE)
     self.window.open_file(self.todo_file.output_filepath)
