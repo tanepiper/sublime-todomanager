@@ -38,7 +38,7 @@ class TodoFile(object):
   # Move mappings
   MOVE_UP = 0
   MOVE_DOWN = 1
-  
+
   # Priority List
   TODO_OPTIONS = [
     ['', 'No priority'],
@@ -54,7 +54,7 @@ class TodoFile(object):
     ['Cancel Purge', 'Cancel purging done todo items']
   ]
 
-  def __init__(self, parent_file_path, settings, show_state=TodoFile.SHOW_STATE_ALL):
+  def __init__(self, parent_file_path, settings, show_state=1):
     """
     Initialise the Todo file object
     """
@@ -65,7 +65,7 @@ class TodoFile(object):
     self.parent_file_parts = self.parent_file_path.split(os.path.sep)
     # Filename of the current file in view
     self.parent_filename = self.parent_file_parts[len(self.parent_file_parts) - 1]
- 
+
     # Home path to save todo, either set or default
     self.home_path = settings.get('todo_path') or TodoFile.DEFAULT_TODO_PATH
 
@@ -73,7 +73,7 @@ class TodoFile(object):
     self.output_filepath = '%s%s%s' % (self.home_path, os.path.sep, self.generate_filename())
 
     # Set the current state as global to the object
-    self.show_state = show_state 
+    self.show_state = show_state
 
     # Check the path exists and create it if not, once done read the file into memory
     try:
@@ -184,7 +184,7 @@ class TodoFile(object):
           self.current_display_mapping.append(self.current_line_index)
           self.current_display_items.append([self.create_header_line(line, self.current_line_index), line])
         self.current_line_index = self.current_line_index + 1
-    
+
     if len(self.current_display_items) == 0:
       self.current_display_items.append(['No todos for this file', 'Select the Todo: Add option to begin adding'])
     return self.current_display_items
@@ -205,7 +205,7 @@ class TodoFile(object):
     """
     line_number = self.current_display_mapping[self.todo_position]
     new_index = line_number + (1 if direction == TodoFile.MOVE_DOWN else -1)
-    
+
     if new_index > -1:
       self.lines.insert(new_index, self.lines.pop(line_number))
       self.write()
@@ -327,7 +327,7 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
     if text != '':
       self.output_string += ' %s' % text
     self.window.show_input_panel("Enter Line Number", '%s' % self.at_line if self.at_line is not False else '', self.on_line_number, None, self.on_cancel)
-    
+
   def on_priority(self, option):
     """
     Add the priority to the todo
@@ -356,7 +356,7 @@ class TodoManagerAdd(sublime_plugin.WindowCommand):
       self.at_function = self.get_current_function()
 
     self.window.show_quick_panel(TodoFile.TODO_OPTIONS, self.on_priority)
-    
+
 class TodoManagerList(sublime_plugin.WindowCommand):
   """
   WindowCommand for the following features:
@@ -409,7 +409,7 @@ class TodoManagerList(sublime_plugin.WindowCommand):
         self.window.show_quick_panel(TodoFile.MOVE_OPTIONS, self.on_move_action)
     else:
       pass
-     
+
   def on_todo_selection(self, option):
     """
     When a todo from the presented list has been selected, the action selection menu is shown
