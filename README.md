@@ -16,7 +16,8 @@ Commands available through the command palate are:
 * Todo: Open file
 * Todo: Purge
 
-All have keybindings for Windows, Mac and Linux (untested).
+All have keybindings for Windows, Mac and Linux (untested) and the add functions also now include context menu items
+so you can quickly add at the current location with the right click of a mouse.
 
 Adding a todo
 -------------
@@ -77,3 +78,4 @@ Future features
 * Search over todo file contents
 * List all todo files
 * Provide way to mark source with todo information
+* Support for start/end dates in todos, with filtering
