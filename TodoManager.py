@@ -472,3 +472,12 @@ class TodoManagerOpen(sublime_plugin.WindowCommand):
       settings = sublime.load_settings('TodoManager.sublime-settings')
       self.todo_file = TodoFile(self.window.active_view().file_name(), settings, SHOW_STATE_DONE)
       self.window.open_file(self.todo_file.output_filepath)
+
+class CheckTodoFile(sublime_plugin.EventListener):
+
+  def on_load(self, view):
+    settings = sublime.load_settings('TodoManager.sublime-settings')
+    self.todo_file = TodoFile(view.file_name(), settings, SHOW_STATE_ALL)
+    active_todos = len(self.todo_file.active_todos)
+    if active_todos > 0:
+      view.set_status('todomanger', '%s currently has %s active todos' % (self.todo_file.parent_filename, active_todos))
