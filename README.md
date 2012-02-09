@@ -4,7 +4,7 @@ Sublime Text 2 Todo Manager
 
 * Sourcecode: https://github.com/tanepiper/sublime-todomanager
 * Sublime Text 2 forum thread: http://www.sublimetext.com/forum/viewtopic.php?f=5&t=4491
-* Release: 1.1.9
+* Release: 1.1.10
 * Author: Tane Piper
 
 Is available via the package manager for install.  Please note that SublimeTODO
